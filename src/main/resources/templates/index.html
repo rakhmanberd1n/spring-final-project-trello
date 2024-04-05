@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="main.html">
+
+<div layout:fragment="mainFragment">
+
+    <div class="alert alert-danger" role="alert" th:if="${param.folderAlreadyExists}">
+        Folder with this name already exists!
+    </div>
+
+    <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        + New Folder
+    </button>
+
+    <div class="form-control mt-5" th:each="folder : ${folders}">
+        <h1 class="mb-3" th:text="${folder.getName()}"></h1>
+        <a th:href="'/' + ${folder.getId()}" class="btn btn-primary mb-3">Details</a>
+    </div>
+
+    <form action="/" method="post">
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">ADD NEW FOLDER</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">FOLDER NAME:</label>
+                            <input class="form-control" placeholder="Folder Name" name="name">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button class="btn btn-success">ADD FOLDER</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+</html>

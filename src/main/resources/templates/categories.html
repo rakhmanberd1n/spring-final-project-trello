@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="main.html">
+
+<div layout:fragment="mainFragment">
+    <div class="alert alert-danger" role="alert" th:if="${param.categoryAlreadyExists}">
+        Category with this name already exists!
+    </div>
+
+    <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        + New Category
+    </button>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">RENAME</th>
+            <th scope="col">DELETE</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="category : ${categories}">
+            <th scope="row" th:text="${category.getId()}"></th>
+            <td th:text="${category.getName()}"></td>
+            <td>
+                <form th:action="'/categories/' + ${category.getId()}" method="post">
+                    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#renameModal">
+                        RENAME
+                    </button>
+
+                    <div class="modal fade" id="renameModal" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5">RENAME CATEGORY</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">NEW CATEGORY NAME:</label>
+                                        <input class="form-control" th:value="${category.getName()}" placeholder="Folder Name" name="name">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button class="btn btn-warning">RENAME CATEGORY</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </td>
+            <td>
+                <form th:action="'/categories/' + ${category.getId()} + '/delete'" method="post">
+                    <button class="btn btn-danger">
+                        DELETE
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <form action="/categories" method="post">
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">ADD NEW CATEGORY</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">CATEGORY NAME:</label>
+                            <input class="form-control" placeholder="Folder Name" name="name">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button class="btn btn-success">ADD CATEGORY</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+
+</div>
+
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="main.html">
+
+<div layout:fragment="mainFragment">
+
+    <div class="form-control mt-5">
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title" th:text="${task.getTitle()}"></h5>
+                <p class="card-text" th:text="'About: ' + ${task.getDescription()}"></p>
+                <p class="card-text" th:if="${task.getStatus() == 0}">Status: <span class="text-primary">TODO</span> </p>
+                <p class="card-text" th:if="${task.getStatus() == 1}">Status: <span class="text-warning">IN TEST</span></p>
+                <p class="card-text" th:if="${task.getStatus() == 2}">Status: <span class="text-success">DONE</span></p>
+                <p class="card-text" th:if="${task.getStatus() == 3}">Status: <span class="text-danger">FAILED</span></p>
+                <button type="button" class="btn btn-warning mt-3" data-bs-toggle="modal" data-bs-target="#updateTaskModal" th:if="${task.getStatus() != 2 && task.getStatus() != 3}">
+                    UPDATE
+                </button>
+                <button type="button" class="btn btn-danger mt-3" data-bs-toggle="modal" data-bs-target="#deleteTaskModal">
+                    DELETE
+                </button>
+            </div>
+        </div>
+
+        <div>
+            <form th:action="'/tasks/' + ${task.getId()} + '/edit/add-comment'" method="post">
+                <div class="mb-3">
+                    <label for="exampleFormControlTextarea1" class="form-label"></label>
+                    <textarea class="form-control" name="comment" id="exampleFormControlTextarea1" rows="3"></textarea>
+                </div>
+                <button class="btn btn-success mb-2">Add comment</button>
+            </form>
+
+            <div>
+                <div th:each="comment : ${task.commentaries}" class="card mb-3">
+                    <div class="card-body">
+                        <p class="card-text" th:text="${comment.getComment()}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <!--        UPDATE TASK-->
+    <form th:action="'/tasks/' + ${task.getId()}" method="post">
+        <div class="modal fade" id="updateTaskModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">UPDATE TASK</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">TASK TITLE:</label>
+                            <input class="form-control" placeholder="Task Title" name="title" th:value="${task.getTitle()}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">TASK DESCRIPTION:</label>
+                            <textarea class="form-control" name="description" th:text="${task.getDescription()}"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">TASK STATUS:</label>
+                            <select name="status">
+                                <option value="0" class="text-primary" th:selected="${task.getStatus() == 0}">TO DO</option>
+                                <option value="1" class="text-warning" th:selected="${task.getStatus() == 1}">IN TEST</option>
+                                <option value="2" class="text-success" th:selected="${task.getStatus() == 2}">DONE</option>
+                                <option value="3" class="text-danger" th:selected="${task.getStatus() == 3}">FAILED</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button class="btn btn-warning">UPDATE TASK</button>comment
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!--        DELETE TASK-->
+    <form th:action="'/tasks/' + ${task.getId()} + '/delete'" method="post">
+        <div class="modal fade" id="deleteTaskModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">DELETE TASK</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="folderId" th:value="${task.getFolder().getId()}">
+                        Delete this task?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button class="btn btn-danger">DELETE TASK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+
+
+</div>
+
+</html>

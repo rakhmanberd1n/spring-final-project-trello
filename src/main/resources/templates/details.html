@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="main.html">
+
+<div layout:fragment="mainFragment">
+
+    <div class="alert alert-danger" role="alert" th:if="${param.folderAlreadyExists}">
+        Folder with this name already exists!
+    </div>
+
+    <div class="form-control mt-5">
+        <h1 class="mb-3" th:text="${folder.getName()}"></h1>
+        <div class="d-flex">
+            <form th:action="'/' + ${folder.getId()} + '/remove-category'" class="mb-3 d-flex" method="post">
+                <div th:each="category : ${folder.getCategories()}">
+                    <input type="hidden" name="categoryId" th:value="${category.getId()}">
+                    <button class="btn btn-sm btn-primary ms-2"  th:text="${category.getName()} + ' x'"></button>
+                </div>
+
+                <button type="button" class="btn bg-transparent ms-3 text-black" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    + Add Category
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+        + New Task
+    </button>
+    <button type="button" class="btn btn-warning ms-3 mt-3" data-bs-toggle="modal" data-bs-target="#renameFolderModal">
+        RENAME FOLDER
+    </button>
+    <button type="button" class="btn btn-danger ms-3 mt-3" data-bs-toggle="modal" data-bs-target="#deleteFolderModal">
+        DELETE FOLDER
+    </button>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Task Name</th>
+            <th scope="col">Status</th>
+            <th scope="col">Details</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="task : ${folder.getTasks()}">
+            <th scope="row" th:text="${task.getId()}"></th>
+            <td th:text="${task.getTitle()}"></td>
+            <td class="text-primary" th:if="${task.getStatus() == 0}">TODO</td>
+            <td class="text-warning" th:if="${task.getStatus() == 1}">IN TEST</td>
+            <td class="text-success" th:if="${task.getStatus() == 2}">DONE</td>
+            <td class="text-danger" th:if="${task.getStatus() == 3}">FAILED</td>
+            <td><a th:href="'/tasks/' + ${task.getId()}" class="btn btn-primary">View More</a></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!--        ADD CATEGORY MODAL-->
+    <form th:action="'/' + ${folder.getId()} + '/add-category'" method="post">
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">ASSIGN CATEGORY</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">CATEGORY NAME:</label>
+                            <select class="form-control" name="categoryId">
+                                <option th:each="category : ${categories}"
+                                        th:value="${category.getId()}"
+                                        th:text="${category.getName()}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button class="btn btn-success">ADD</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!--        CREATE TASK-->
+    <form action="/tasks" method="post">
+        <div class="modal fade" id="addTaskModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <input type="hidden" name="folderId" th:value="${folder.getId()}">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">ADD NEW TASK</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">TASK TITLE:</label>
+                            <input class="form-control" placeholder="Task Title" name="title">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">TASK DESCRIPTION:</label>
+                            <textarea class="form-control" name="description"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button class="btn btn-success">ADD TASK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!--        DELETE FOLDER-->
+    <form th:action="'/' + ${folder.getId()}" method="post">
+        <div class="modal fade" id="deleteFolderModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">DELETE FOLDER</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Delete this folder?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button class="btn btn-danger">DELETE FOLDER</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!--        RENAME FOLDER-->
+    <form th:action="'/' + ${folder.getId()} + '/update'" method="post">
+        <div class="modal fade" id="renameFolderModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">UPDATE FOLDER</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">FOLDER  NAME:</label>
+                            <input class="form-control" placeholder="Folder name" name="name" th:value="${folder.getName()}">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button class="btn btn-warning">UPDATE FOLDER</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+</html>
